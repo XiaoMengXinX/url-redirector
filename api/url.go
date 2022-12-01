@@ -21,10 +21,6 @@ func init() {
 }
 
 func UrlHandler(w http.ResponseWriter, r *http.Request) {
-	if len(r.URL.Path) <= 1 {
-		_, _ = fmt.Fprintf(w, "Invaid short name")
-		return
-	}
 	for _, rt := range routes {
 		scope := regexp.MustCompile(rt.Scope)
 		if scope.MatchString(r.URL.Host) {
