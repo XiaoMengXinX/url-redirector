@@ -28,10 +28,6 @@ func UrlHandler(w http.ResponseWriter, r *http.Request) {
 	for _, rt := range routes {
 		scope := regexp.MustCompile(rt.Scope)
 		if scope.MatchString(r.URL.Host) {
-			if rt.Rules["*"] != "" {
-				http.Redirect(w, r, rt.Rules["*"], http.StatusFound)
-				return
-			}
 			if rt.Rules["/"] != "" && r.URL.Path == "" {
 				http.Redirect(w, r, rt.Rules["/"], http.StatusFound)
 				return
