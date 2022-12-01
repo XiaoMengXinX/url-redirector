@@ -1,4 +1,4 @@
-package route
+package config
 
 import _ "embed"
 

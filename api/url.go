@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"regexp"
 
-	"route"
+	"api/config"
 )
 
 type routeData struct {
@@ -17,7 +17,7 @@ type routeData struct {
 var routes []routeData
 
 func init() {
-	_ = json.Unmarshal(route.Data, &routes)
+	_ = json.Unmarshal(config.Data, &routes)
 }
 
 func UrlHandler(w http.ResponseWriter, r *http.Request) {
@@ -28,8 +28,16 @@ func UrlHandler(w http.ResponseWriter, r *http.Request) {
 	for _, rt := range routes {
 		scope := regexp.MustCompile(rt.Scope)
 		if scope.MatchString(r.URL.Host) {
+			if rt.Rules["*"] != "" {
+				http.Redirect(w, r, rt.Rules["*"], http.StatusFound)
+				return
+			}
+			if rt.Rules["/"] != "" && r.URL.Path == "" {
+				http.Redirect(w, r, rt.Rules["/"], http.StatusFound)
+				return
+			}
 			if url := rt.Rules[r.URL.Path[1:]]; url != "" {
-				http.Redirect(w, r, url, http.StatusMovedPermanently)
+				http.Redirect(w, r, url, http.StatusFound)
 				return
 			} else {
 				_, _ = fmt.Fprintf(w, "Invaid short name")
